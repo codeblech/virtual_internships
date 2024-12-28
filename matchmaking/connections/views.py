@@ -37,9 +37,13 @@ def send_request(request, user_id):
         return redirect("profile_detail", pk=user_id)
 
     if request.user.is_mentor and recipient.is_mentee:
-        Connection.objects.create(mentor=request.user, mentee=recipient)
+        Connection.objects.create(
+            mentor=request.user, mentee=recipient, mentor_initiated=True
+        )
     elif request.user.is_mentee and recipient.is_mentor:
-        Connection.objects.create(mentor=recipient, mentee=request.user)
+        Connection.objects.create(
+            mentor=recipient, mentee=request.user, mentee_initiated=True
+        )
     else:
         messages.error(request, "Invalid mentor/mentee combination!")
         return redirect("profile_detail", pk=user_id)
@@ -52,18 +56,24 @@ def send_request(request, user_id):
 @login_required
 def accept_request(request, connection_id):
     connection = get_object_or_404(Connection, id=connection_id)
-    # Only allow the recipient to accept the request
-    if (request.user.is_mentor and request.user == connection.mentor) or (
-        request.user.is_mentee and request.user == connection.mentee
-    ):
-        if connection.status == "PENDING":
+    # Check if the current user is the recipient of the request
+    if connection.status == "PENDING":
+        if (
+            request.user.is_mentor
+            and request.user == connection.mentor
+            and not connection.mentor_initiated
+        ) or (
+            request.user.is_mentee
+            and request.user == connection.mentee
+            and not connection.mentee_initiated
+        ):
             connection.status = "ACCEPTED"
             connection.save()
             messages.success(request, "Connection accepted!")
         else:
-            messages.error(request, "This connection cannot be accepted!")
+            messages.error(request, "You cannot accept a request you sent!")
     else:
-        messages.error(request, "You don't have permission to accept this request!")
+        messages.error(request, "This connection cannot be accepted!")
     return redirect("connection_list")
 
 
@@ -71,18 +81,24 @@ def accept_request(request, connection_id):
 @login_required
 def reject_request(request, connection_id):
     connection = get_object_or_404(Connection, id=connection_id)
-    # Only allow the recipient to reject the request
-    if (request.user.is_mentor and request.user == connection.mentor) or (
-        request.user.is_mentee and request.user == connection.mentee
-    ):
-        if connection.status == "PENDING":
+    # Check if the current user is the recipient of the request
+    if connection.status == "PENDING":
+        if (
+            request.user.is_mentor
+            and request.user == connection.mentor
+            and not connection.mentor_initiated
+        ) or (
+            request.user.is_mentee
+            and request.user == connection.mentee
+            and not connection.mentee_initiated
+        ):
             connection.status = "REJECTED"
             connection.save()
             messages.success(request, "Connection rejected!")
         else:
-            messages.error(request, "This connection cannot be rejected!")
+            messages.error(request, "You cannot reject a request you sent!")
     else:
-        messages.error(request, "You don't have permission to reject this request!")
+        messages.error(request, "This connection cannot be rejected!")
     return redirect("connection_list")
 
 

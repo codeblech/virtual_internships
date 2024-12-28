@@ -22,3 +22,5 @@ class Connection(models.Model):
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default="PENDING")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    mentor_initiated = models.BooleanField(default=False)
+    mentee_initiated = models.BooleanField(default=False)
