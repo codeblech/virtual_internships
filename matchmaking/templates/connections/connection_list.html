@@ -12,7 +12,7 @@
     <div class="connection-card">
         <p>Mentee: {{ connection.mentee.username }}</p>
         <p>Status: {{ connection.status }}</p>
-        {% if connection.status == 'PENDING' %}
+        {% if connection.status == 'PENDING' and user == connection.mentor %}
         <a href="{% url 'accept_request' connection.id %}" class="button">Accept</a>
         <a href="{% url 'reject_request' connection.id %}" class="button">Reject</a>
         {% endif %}
@@ -30,7 +30,7 @@
     <div class="connection-card">
         <p>Mentor: {{ connection.mentor.username }}</p>
         <p>Status: {{ connection.status }}</p>
-        {% if connection.status == 'PENDING' %}
+        {% if connection.status == 'PENDING' and user == connection.mentee %}
         <a href="{% url 'accept_request' connection.id %}" class="button">Accept</a>
         <a href="{% url 'reject_request' connection.id %}" class="button">Reject</a>
         {% endif %}
