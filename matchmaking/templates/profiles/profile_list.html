@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}Profiles - Mentorship Platform{% endblock %}
+
+{% block content %}
+<h2>All Profiles</h2>
+<div class="profiles-grid">
+    {% for profile in profiles %}
+    <div class="profile-card">
+        <h3>{{ profile.user.username }}</h3>
+        <p>{{ profile.bio|truncatewords:30 }}</p>
+        <a href="{% url 'profile_detail' pk=profile.pk %}">View Profile</a>
+    </div>
+    {% empty %}
+    <p>No profiles found.</p>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,15 +1,21 @@
 from django.shortcuts import render, redirect
-from form import UserRegistrationForm
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from .forms import CustomUserCreationForm
 
 
 def register(request):
     if request.method == "POST":
-        form = UserRegistrationForm(request.POST)
+        form = CustomUserCreationForm(request.POST)
         if form.is_valid():
-            new_user = form.save(commit=False)
-            new_user.set_password(form.cleaned_data["password"])
-            new_user.save()
-            return render(request, "myapp/register_done.html", {"new_user": new_user})
+            form.save()
+            messages.success(request, "Account created successfully! Please login.")
+            return redirect("login")
     else:
-        form = UserRegistrationForm()
-    return render(request, "myapp/register.html", {"form": form})
+        form = CustomUserCreationForm()
+    return render(request, "users/register.html", {"form": form})
+
+
+@login_required
+def home(request):
+    return render(request, "users/home.html")

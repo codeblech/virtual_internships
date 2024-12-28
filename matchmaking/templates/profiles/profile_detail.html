@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ profile.user.username }}'s Profile{% endblock %}
+
+{% block content %}
+<h2>{{ profile.user.username }}'s Profile</h2>
+<div class="profile-detail">
+    <h3>Bio</h3>
+    <p>{{ profile.bio }}</p>
+
+    <h3>Skills</h3>
+    <ul>
+        {% for skill in profile.skills %}
+        <li>{{ skill }}</li>
+        {% endfor %}
+    </ul>
+
+    <h3>Interests</h3>
+    <ul>
+        {% for interest in profile.interests %}
+        <li>{{ interest }}</li>
+        {% endfor %}
+    </ul>
+
+    {% if user == profile.user %}
+    <a href="{% url 'profile_edit' %}" class="button">Edit Profile</a>
+    {% endif %}
+
+    {% if user != profile.user %}
+    {% if user.is_mentor and profile.user.is_mentee or user.is_mentee and profile.user.is_mentor %}
+    <a href="{% url 'send_request' profile.user.id %}" class="button">Send Connection Request</a>
+    {% endif %}
+    {% endif %}
+</div>
+{% endblock %}

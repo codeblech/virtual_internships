@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - Mentorship Platform{% endblock %}
+
+{% block content %}
+<h2>Welcome, {{ user.username }}!</h2>
+<div>
+    <h3>Your Role:</h3>
+    {% if user.is_mentor %}
+    <p>You are registered as a Mentor</p>
+    {% endif %}
+    {% if user.is_mentee %}
+    <p>You are registered as a Mentee</p>
+    {% endif %}
+</div>
+{% endblock %}

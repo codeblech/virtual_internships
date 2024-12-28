@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if profile %}Edit{% else %}Create{% endif %} Profile{% endblock %}
+
+{% block content %}
+<h2>{% if profile %}Edit{% else %}Create{% endif %} Profile</h2>
+<form method="post">
+    {% csrf_token %}
+    <div>
+        <label for="bio">Bio:</label>
+        <textarea name="bio" id="bio">{{ profile.bio|default:'' }}</textarea>
+    </div>
+    <div>
+        <label for="skills">Skills (comma-separated):</label>
+        <input type="text" name="skills" id="skills" value="{{ profile.skills|join:',' }}">
+    </div>
+    <div>
+        <label for="interests">Interests (comma-separated):</label>
+        <input type="text" name="interests" id="interests" value="{{ profile.interests|join:',' }}">
+    </div>
+    <button type="submit">{% if profile %}Update{% else %}Create{% endif %} Profile</button>
+</form>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}My Connections{% endblock %}
+
+{% block content %}
+<h2>My Connections</h2>
+
+{% if user.is_mentor %}
+<div class="mentor-connections">
+    <h3>Mentee Requests</h3>
+    {% for connection in mentor_connections %}
+    <div class="connection-card">
+        <p>Mentee: {{ connection.mentee.username }}</p>
+        <p>Status: {{ connection.status }}</p>
+        {% if connection.status == 'PENDING' %}
+        <a href="{% url 'accept_request' connection.id %}" class="button">Accept</a>
+        <a href="{% url 'reject_request' connection.id %}" class="button">Reject</a>
+        {% endif %}
+    </div>
+    {% empty %}
+    <p>No mentee requests found.</p>
+    {% endfor %}
+</div>
+{% endif %}
+
+{% if user.is_mentee %}
+<div class="mentee-connections">
+    <h3>Mentor Connections</h3>
+    {% for connection in mentee_connections %}
+    <div class="connection-card">
+        <p>Mentor: {{ connection.mentor.username }}</p>
+        <p>Status: {{ connection.status }}</p>
+        {% if connection.status == 'PENDING' %}
+        <a href="{% url 'accept_request' connection.id %}" class="button">Accept</a>
+        <a href="{% url 'reject_request' connection.id %}" class="button">Reject</a>
+        {% endif %}
+    </div>
+    {% empty %}
+    <p>No mentor connections found.</p>
+    {% endfor %}
+</div>
+{% endif %}
+{% endblock %}
