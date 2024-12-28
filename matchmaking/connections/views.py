@@ -9,14 +9,36 @@ from users.decorators import profile_required
 @profile_required
 @login_required
 def connection_list(request):
+    # Get all connections where user is mentor
     mentor_connections = Connection.objects.filter(mentor=request.user)
+    mentor_pending_received = mentor_connections.filter(
+        status="PENDING", mentor_initiated=False
+    )
+    mentor_pending_sent = mentor_connections.filter(
+        status="PENDING", mentor_initiated=True
+    )
+    mentor_accepted = mentor_connections.filter(status="ACCEPTED")
+
+    # Get all connections where user is mentee
     mentee_connections = Connection.objects.filter(mentee=request.user)
+    mentee_pending_received = mentee_connections.filter(
+        status="PENDING", mentee_initiated=False
+    )
+    mentee_pending_sent = mentee_connections.filter(
+        status="PENDING", mentee_initiated=True
+    )
+    mentee_accepted = mentee_connections.filter(status="ACCEPTED")
+
     return render(
         request,
         "connections/connection_list.html",
         {
-            "mentor_connections": mentor_connections,
-            "mentee_connections": mentee_connections,
+            "mentor_pending_received": mentor_pending_received,
+            "mentor_pending_sent": mentor_pending_sent,
+            "mentor_accepted": mentor_accepted,
+            "mentee_pending_received": mentee_pending_received,
+            "mentee_pending_sent": mentee_pending_sent,
+            "mentee_accepted": mentee_accepted,
         },
     )
 
@@ -106,14 +128,21 @@ def reject_request(request, connection_id):
 @login_required
 def cancel_request(request, connection_id):
     connection = get_object_or_404(Connection, id=connection_id)
+    # Check if the current user is the sender of the request
     if connection.status == "PENDING":
-        if (request.user.is_mentor and request.user == connection.mentor) or (
-            request.user.is_mentee and request.user == connection.mentee
+        if (
+            request.user.is_mentor
+            and request.user == connection.mentor
+            and connection.mentor_initiated
+        ) or (
+            request.user.is_mentee
+            and request.user == connection.mentee
+            and connection.mentee_initiated
         ):
             connection.delete()
             messages.success(request, "Connection request cancelled!")
         else:
-            messages.error(request, "You don't have permission to cancel this request!")
+            messages.error(request, "You can only cancel requests you sent!")
     else:
         messages.error(request, "This connection cannot be cancelled!")
     return redirect("connection_list")
@@ -123,15 +152,13 @@ def cancel_request(request, connection_id):
 @login_required
 def terminate_connection(request, connection_id):
     connection = get_object_or_404(Connection, id=connection_id)
+    # Check if the current user is part of the connection
     if connection.status == "ACCEPTED":
-        if request.user in [connection.mentor, connection.mentee]:
-            connection.status = "TERMINATED"
-            connection.save()
-            messages.success(request, "Connection terminated!")
+        if request.user == connection.mentor or request.user == connection.mentee:
+            connection.delete()
+            messages.success(request, "Connection terminated successfully!")
         else:
-            messages.error(
-                request, "You don't have permission to terminate this connection!"
-            )
+            messages.error(request, "You are not part of this connection!")
     else:
-        messages.error(request, "This connection cannot be terminated!")
+        messages.error(request, "Only accepted connections can be terminated!")
     return redirect("connection_list")

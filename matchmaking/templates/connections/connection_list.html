@@ -7,37 +7,120 @@
 
 {% if user.is_mentor %}
 <div class="mentor-connections">
-    <h3>Mentee Requests</h3>
-    {% for connection in mentor_connections %}
-    <div class="connection-card">
-        <p>Mentee: {{ connection.mentee.username }}</p>
-        <p>Status: {{ connection.status }}</p>
-        {% if connection.status == 'PENDING' and user == connection.mentor %}
-        <a href="{% url 'accept_request' connection.id %}" class="button">Accept</a>
-        <a href="{% url 'reject_request' connection.id %}" class="button">Reject</a>
-        {% endif %}
+    <h3>As Mentor</h3>
+
+    <h4>Active Connections</h4>
+    <div class="connection-section">
+        {% for connection in mentor_accepted %}
+        <div class="connection-card">
+            <p>Mentee: {{ connection.mentee.username }}</p>
+            <p>Status: {{ connection.status }}</p>
+            <a href="{% url 'terminate_connection' connection.id %}" class="button">Terminate</a>
+        </div>
+        {% empty %}
+        <p>No active connections.</p>
+        {% endfor %}
     </div>
-    {% empty %}
-    <p>No mentee requests found.</p>
-    {% endfor %}
+
+    <h4>Pending Requests Received</h4>
+    <div class="connection-section">
+        {% for connection in mentor_pending_received %}
+        <div class="connection-card">
+            <p>From Mentee: {{ connection.mentee.username }}</p>
+            <p>Status: Pending</p>
+            <a href="{% url 'accept_request' connection.id %}" class="button">Accept</a>
+            <a href="{% url 'reject_request' connection.id %}" class="button">Reject</a>
+        </div>
+        {% empty %}
+        <p>No pending requests.</p>
+        {% endfor %}
+    </div>
+
+    <h4>Sent Requests</h4>
+    <div class="connection-section">
+        {% for connection in mentor_pending_sent %}
+        <div class="connection-card">
+            <p>To Mentee: {{ connection.mentee.username }}</p>
+            <p>Status: Pending</p>
+            <a href="{% url 'cancel_request' connection.id %}" class="button">Cancel</a>
+        </div>
+        {% empty %}
+        <p>No sent requests.</p>
+        {% endfor %}
+    </div>
 </div>
 {% endif %}
 
 {% if user.is_mentee %}
 <div class="mentee-connections">
-    <h3>Mentor Connections</h3>
-    {% for connection in mentee_connections %}
-    <div class="connection-card">
-        <p>Mentor: {{ connection.mentor.username }}</p>
-        <p>Status: {{ connection.status }}</p>
-        {% if connection.status == 'PENDING' and user == connection.mentee %}
-        <a href="{% url 'accept_request' connection.id %}" class="button">Accept</a>
-        <a href="{% url 'reject_request' connection.id %}" class="button">Reject</a>
-        {% endif %}
+    <h3>As Mentee</h3>
+
+    <h4>Active Connections</h4>
+    <div class="connection-section">
+        {% for connection in mentee_accepted %}
+        <div class="connection-card">
+            <p>Mentor: {{ connection.mentor.username }}</p>
+            <p>Status: {{ connection.status }}</p>
+            <a href="{% url 'terminate_connection' connection.id %}" class="button">Terminate</a>
+        </div>
+        {% empty %}
+        <p>No active connections.</p>
+        {% endfor %}
     </div>
-    {% empty %}
-    <p>No mentor connections found.</p>
-    {% endfor %}
+
+    <h4>Pending Requests Received</h4>
+    <div class="connection-section">
+        {% for connection in mentee_pending_received %}
+        <div class="connection-card">
+            <p>From Mentor: {{ connection.mentor.username }}</p>
+            <p>Status: Pending</p>
+            <a href="{% url 'accept_request' connection.id %}" class="button">Accept</a>
+            <a href="{% url 'reject_request' connection.id %}" class="button">Reject</a>
+        </div>
+        {% empty %}
+        <p>No pending requests.</p>
+        {% endfor %}
+    </div>
+
+    <h4>Sent Requests</h4>
+    <div class="connection-section">
+        {% for connection in mentee_pending_sent %}
+        <div class="connection-card">
+            <p>To Mentor: {{ connection.mentor.username }}</p>
+            <p>Status: Pending</p>
+            <a href="{% url 'cancel_request' connection.id %}" class="button">Cancel</a>
+        </div>
+        {% empty %}
+        <p>No sent requests.</p>
+        {% endfor %}
+    </div>
 </div>
 {% endif %}
+
+<style>
+    .connection-section {
+        margin-bottom: 2rem;
+    }
+
+    .connection-card {
+        border: 1px solid #ddd;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        border-radius: 4px;
+    }
+
+    .button {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        background-color: #007bff;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        margin-right: 0.5rem;
+    }
+
+    .button:hover {
+        background-color: #0056b3;
+    }
+</style>
 {% endblock %}

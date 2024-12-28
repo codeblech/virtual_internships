@@ -47,12 +47,19 @@ def profile_create(request):
 def profile_edit(request):
     profile = get_object_or_404(Profile, user=request.user)
     if request.method == "POST":
-        # Handle profile update (we'll add form handling later)
-        profile.bio = request.POST.get("bio", "")
-        profile.skills = request.POST.getlist("skills", [])
-        profile.interests = request.POST.getlist("interests", [])
-        profile.save()
-        messages.success(request, "Profile updated successfully!")
-        return redirect("profile_detail", pk=profile.pk)
+        form = ProfileForm(request.POST, instance=profile)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Profile updated successfully!")
+            return redirect("profile_detail", pk=profile.pk)
+    else:
+        initial_data = {
+            "bio": profile.bio,
+            "skills": ", ".join(profile.skills),
+            "interests": ", ".join(profile.interests),
+        }
+        form = ProfileForm(instance=profile, initial=initial_data)
 
-    return render(request, "profiles/profile_form.html", {"profile": profile})
+    return render(
+        request, "profiles/profile_form.html", {"form": form, "profile": profile}
+    )
