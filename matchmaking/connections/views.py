@@ -3,8 +3,10 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import Connection
 from users.models import CustomUser
+from users.decorators import profile_required
 
 
+@profile_required
 @login_required
 def connection_list(request):
     mentor_connections = Connection.objects.filter(mentor=request.user)
@@ -19,6 +21,7 @@ def connection_list(request):
     )
 
 
+@profile_required
 @login_required
 def send_request(request, user_id):
     recipient = get_object_or_404(CustomUser, id=user_id)
@@ -45,6 +48,7 @@ def send_request(request, user_id):
     return redirect("connection_list")
 
 
+@profile_required
 @login_required
 def accept_request(request, connection_id):
     connection = get_object_or_404(Connection, id=connection_id)
@@ -63,6 +67,7 @@ def accept_request(request, connection_id):
     return redirect("connection_list")
 
 
+@profile_required
 @login_required
 def reject_request(request, connection_id):
     connection = get_object_or_404(Connection, id=connection_id)
@@ -78,4 +83,39 @@ def reject_request(request, connection_id):
             messages.error(request, "This connection cannot be rejected!")
     else:
         messages.error(request, "You don't have permission to reject this request!")
+    return redirect("connection_list")
+
+
+@profile_required
+@login_required
+def cancel_request(request, connection_id):
+    connection = get_object_or_404(Connection, id=connection_id)
+    if connection.status == "PENDING":
+        if (request.user.is_mentor and request.user == connection.mentor) or (
+            request.user.is_mentee and request.user == connection.mentee
+        ):
+            connection.delete()
+            messages.success(request, "Connection request cancelled!")
+        else:
+            messages.error(request, "You don't have permission to cancel this request!")
+    else:
+        messages.error(request, "This connection cannot be cancelled!")
+    return redirect("connection_list")
+
+
+@profile_required
+@login_required
+def terminate_connection(request, connection_id):
+    connection = get_object_or_404(Connection, id=connection_id)
+    if connection.status == "ACCEPTED":
+        if request.user in [connection.mentor, connection.mentee]:
+            connection.status = "TERMINATED"
+            connection.save()
+            messages.success(request, "Connection terminated!")
+        else:
+            messages.error(
+                request, "You don't have permission to terminate this connection!"
+            )
+    else:
+        messages.error(request, "This connection cannot be terminated!")
     return redirect("connection_list")

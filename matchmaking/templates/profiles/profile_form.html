@@ -6,18 +6,27 @@
 <h2>{% if profile %}Edit{% else %}Create{% endif %} Profile</h2>
 <form method="post">
     {% csrf_token %}
-    <div>
-        <label for="bio">Bio:</label>
-        <textarea name="bio" id="bio">{{ profile.bio|default:'' }}</textarea>
+    {% if form.non_field_errors %}
+    <div class="alert alert-danger">
+        {{ form.non_field_errors }}
     </div>
-    <div>
-        <label for="skills">Skills (comma-separated):</label>
-        <input type="text" name="skills" id="skills" value="{{ profile.skills|join:',' }}">
+    {% endif %}
+
+    {% for field in form %}
+    <div class="form-group">
+        {{ field.label_tag }}
+        {{ field }}
+        {% if field.errors %}
+        <div class="alert alert-danger">
+            {{ field.errors }}
+        </div>
+        {% endif %}
+        {% if field.help_text %}
+        <small class="form-text text-muted">{{ field.help_text }}</small>
+        {% endif %}
     </div>
-    <div>
-        <label for="interests">Interests (comma-separated):</label>
-        <input type="text" name="interests" id="interests" value="{{ profile.interests|join:',' }}">
-    </div>
+    {% endfor %}
+
     <button type="submit">{% if profile %}Update{% else %}Create{% endif %} Profile</button>
 </form>
 {% endblock %}
