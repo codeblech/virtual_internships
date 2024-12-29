@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+{% load widget_tweaks %}
 {% block title %}Register - Mentorship Platform{% endblock %}
 
 {% block content %}
@@ -17,7 +17,7 @@
                 <label for="{{ field.id_for_label }}" class="form-label">
                     {{ field.label }}
                 </label>
-                {{ field }}
+                {{ field|add_class:"form-control" }}
                 {% if field.errors %}
                 <div class="form-error">
                     {{ field.errors }}

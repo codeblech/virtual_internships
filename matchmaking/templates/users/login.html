@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+{% load widget_tweaks %}
 {% block title %}Login - Mentorship Platform{% endblock %}
 
 {% block content %}
@@ -15,7 +15,7 @@
                 <label for="{{ field.id_for_label }}" class="form-label">
                     {{ field.label }}
                 </label>
-                {{ field }}
+                {{ field|add_class:"form-control" }}
                 {% if field.errors %}
                 <div class="form-error">
                     {{ field.errors }}
@@ -34,49 +34,49 @@
 </div>
 
 <style>
-.auth-container {
-    max-width: 400px;
-    margin: 2rem auto;
-}
+    .auth-container {
+        max-width: 400px;
+        margin: 2rem auto;
+    }
 
-.auth-card {
-    padding: 2rem;
-}
+    .auth-card {
+        padding: 2rem;
+    }
 
-.auth-subtitle {
-    color: var(--gray-600);
-    margin-bottom: 2rem;
-}
+    .auth-subtitle {
+        color: var(--gray-600);
+        margin-bottom: 2rem;
+    }
 
-.auth-form {
-    margin-bottom: 1.5rem;
-}
+    .auth-form {
+        margin-bottom: 1.5rem;
+    }
 
-.btn-block {
-    width: 100%;
-    justify-content: center;
-}
+    .btn-block {
+        width: 100%;
+        justify-content: center;
+    }
 
-.auth-footer {
-    text-align: center;
-    margin-top: 1.5rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid var(--gray-200);
-}
+    .auth-footer {
+        text-align: center;
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--gray-200);
+    }
 
-.auth-footer a {
-    color: var(--primary);
-    text-decoration: none;
-}
+    .auth-footer a {
+        color: var(--primary);
+        text-decoration: none;
+    }
 
-.auth-footer a:hover {
-    text-decoration: underline;
-}
+    .auth-footer a:hover {
+        text-decoration: underline;
+    }
 
-.form-error {
-    color: var(--danger);
-    font-size: 0.875rem;
-    margin-top: 0.5rem;
-}
+    .form-error {
+        color: var(--danger);
+        font-size: 0.875rem;
+        margin-top: 0.5rem;
+    }
 </style>
 {% endblock %}
