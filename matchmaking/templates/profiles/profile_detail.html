@@ -3,33 +3,120 @@
 {% block title %}{{ profile.user.username }}'s Profile{% endblock %}
 
 {% block content %}
-<h2>{{ profile.user.username }}'s Profile</h2>
-<div class="profile-detail">
-    <h3>Bio</h3>
-    <p>{{ profile.bio }}</p>
+<div class="profile-detail-page">
+    <div class="card profile-header-card">
+        <div class="profile-header-content">
+            <div class="profile-avatar large">
+                {{ profile.user.username|first|upper }}
+            </div>
+            <div class="profile-main-info">
+                <h1 class="profile-name">{{ profile.user.username }}</h1>
+                <div class="profile-roles">
+                    {% if profile.user.is_mentor %}
+                    <span class="badge badge-primary">Mentor</span>
+                    {% endif %}
+                    {% if profile.user.is_mentee %}
+                    <span class="badge badge-secondary">Mentee</span>
+                    {% endif %}
+                </div>
+            </div>
 
-    <h3>Skills</h3>
-    <ul>
-        {% for skill in profile.skills %}
-        <li>{{ skill }}</li>
-        {% endfor %}
-    </ul>
+            <div class="profile-actions">
+                {% if user == profile.user %}
+                <a href="{% url 'profile_edit' %}" class="btn btn-secondary">Edit Profile</a>
+                {% else %}
+                {% if user.is_mentor and profile.user.is_mentee or user.is_mentee and profile.user.is_mentor %}
+                <a href="{% url 'send_request' profile.user.id %}" class="btn btn-primary">Send Connection Request</a>
+                {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
 
-    <h3>Interests</h3>
-    <ul>
-        {% for interest in profile.interests %}
-        <li>{{ interest }}</li>
-        {% endfor %}
-    </ul>
+    <div class="profile-content-grid">
+        <div class="card">
+            <h2>About</h2>
+            <p class="profile-bio">{{ profile.bio }}</p>
+        </div>
 
-    {% if user == profile.user %}
-    <a href="{% url 'profile_edit' %}" class="button">Edit Profile</a>
-    {% endif %}
+        <div class="card">
+            <h2>Skills</h2>
+            <div class="skills-list">
+                {% for skill in profile.skills %}
+                <span class="skill-tag">{{ skill }}</span>
+                {% empty %}
+                <p class="text-muted">No skills listed</p>
+                {% endfor %}
+            </div>
+        </div>
 
-    {% if user != profile.user %}
-    {% if user.is_mentor and profile.user.is_mentee or user.is_mentee and profile.user.is_mentor %}
-    <a href="{% url 'send_request' profile.user.id %}" class="button">Send Connection Request</a>
-    {% endif %}
-    {% endif %}
+        <div class="card">
+            <h2>Interests</h2>
+            <div class="skills-list">
+                {% for interest in profile.interests %}
+                <span class="skill-tag">{{ interest }}</span>
+                {% empty %}
+                <p class="text-muted">No interests listed</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
 </div>
+
+<style>
+    .profile-detail-page {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .profile-header-card {
+        margin-bottom: 2rem;
+    }
+
+    .profile-header-content {
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+    }
+
+    .profile-avatar.large {
+        width: 96px;
+        height: 96px;
+        font-size: 2rem;
+    }
+
+    .profile-main-info {
+        flex: 1;
+    }
+
+    .profile-roles {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+    }
+
+    .profile-content-grid {
+        display: grid;
+        gap: 1.5rem;
+    }
+
+    .text-muted {
+        color: var(--gray-600);
+        font-style: italic;
+    }
+
+    @media (max-width: 640px) {
+        .profile-header-content {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .profile-actions {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+    }
+</style>
 {% endblock %}

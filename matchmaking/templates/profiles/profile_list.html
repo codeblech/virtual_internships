@@ -1,47 +1,100 @@
 {% extends 'base.html' %}
 
-{% block title %}Profiles - Mentorship Platform{% endblock %}
+{% block title %}Browse Profiles - Mentorship Platform{% endblock %}
 
 {% block content %}
-<h2>All Profiles</h2>
+<div class="page-header">
+    <h1>Browse Profiles</h1>
+    <form id="profile-filter-form" class="filter-form card">
+        <div class="filter-grid">
+            <div class="form-group">
+                <label for="role-filter" class="form-label">Role</label>
+                <select id="role-filter" class="form-control">
+                    <option value="all">All Roles</option>
+                    <option value="mentor">Mentors</option>
+                    <option value="mentee">Mentees</option>
+                </select>
+            </div>
 
-<form id="profile-filter-form" class="filter-form">
-    <div class="filter-group">
-        <label for="role-filter">Role:</label>
-        <select id="role-filter">
-            <option value="all">All</option>
-            <option value="mentor">Mentors</option>
-            <option value="mentee">Mentees</option>
-        </select>
-    </div>
+            <div class="form-group">
+                <label for="skill-filter" class="form-label">Skill</label>
+                <input type="text" id="skill-filter" class="form-control" placeholder="e.g., Python, JavaScript">
+            </div>
 
-    <div class="filter-group">
-        <label for="skill-filter">Skill:</label>
-        <input type="text" id="skill-filter" placeholder="Filter by skill">
-    </div>
-    
-    <div class="filter-group">
-        <label for="search-query">Search:</label>
-        <input type="text" id="search-query" placeholder="Search profiles">
-    </div>
-</form>
+            <div class="form-group">
+                <label for="search-query" class="form-label">Search</label>
+                <input type="text" id="search-query" class="form-control" placeholder="Search by name or bio">
+            </div>
+        </div>
+    </form>
+</div>
 
-<div class="profiles-grid">
+<div class="grid">
     {% for profile in profiles %}
-    <div class="profile-card"
-         data-role="{% if profile.user.is_mentor %}mentor{% else %}mentee{% endif %}"
-         data-skills="{{ profile.skills|join:',' }}">
-        <h3>{{ profile.user.username }}</h3>
-        <p>{{ profile.bio|truncatewords:30 }}</p>
+    <div class="card profile-card"
+        data-role="{% if profile.user.is_mentor %}mentor{% elif profile.user.is_mentee %}mentee{% endif %}"
+        data-skills="{{ profile.skills|join:',' }}">
+        <div class="profile-header">
+            <div class="profile-avatar">
+                {{ profile.user.username|first|upper }}
+            </div>
+            <div class="profile-info">
+                <h3 class="profile-name">{{ profile.user.username }}</h3>
+                <span class="profile-role">
+                    {% if profile.user.is_mentor %}Mentor{% endif %}
+                    {% if profile.user.is_mentee %}Mentee{% endif %}
+                </span>
+            </div>
+        </div>
+
+        <p class="profile-bio">{{ profile.bio|truncatewords:30 }}</p>
+
         <div class="skills-list">
-            {% for skill in profile.skills %}
+            {% for skill in profile.skills|slice:":3" %}
             <span class="skill-tag">{{ skill }}</span>
             {% endfor %}
+            {% if profile.skills|length > 3 %}
+            <span class="skill-tag">+{{ profile.skills|length|add:"-3" }}</span>
+            {% endif %}
         </div>
-        <a href="{% url 'profile_detail' pk=profile.pk %}" class="view-profile-btn">View Profile</a>
+
+        <div class="profile-actions">
+            <a href="{% url 'profile_detail' profile.pk %}" class="btn btn-primary">View Profile</a>
+        </div>
     </div>
     {% empty %}
-    <p>No profiles found.</p>
+    <div class="empty-state">
+        <p>No profiles found matching your criteria.</p>
+    </div>
     {% endfor %}
 </div>
+
+<style>
+    .page-header {
+        margin-bottom: 2rem;
+    }
+
+    .filter-form {
+        margin-top: 1rem;
+    }
+
+    .filter-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+    }
+
+    .profile-bio {
+        color: var(--gray-600);
+        font-size: 0.875rem;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem;
+        background: white;
+        border-radius: 0.5rem;
+        grid-column: 1 / -1;
+    }
+</style>
 {% endblock %}

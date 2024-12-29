@@ -3,67 +3,109 @@
 {% block title %}{% if profile %}Edit{% else %}Create{% endif %} Profile{% endblock %}
 
 {% block content %}
-<h2>{% if profile %}Edit{% else %}Create{% endif %} Profile</h2>
-<form method="post" onsubmit="return validateProfileForm()">
-    {% csrf_token %}
-    {% if form.non_field_errors %}
-    <div class="alert alert-danger">
-        {{ form.non_field_errors }}
-    </div>
-    {% endif %}
+<div class="profile-form-container">
+    <div class="card">
+        <h1>{% if profile %}Edit{% else %}Create{% endif %} Your Profile</h1>
+        <p class="form-subtitle">Tell us about yourself and what you're looking for</p>
 
-    {% for field in form %}
-    <div class="form-group">
-        {{ field.label_tag }}
-        {{ field }}
-        {% if field.field.required %}
-        <span class="required-indicator">*</span>
-        {% endif %}
-        {% if field.errors %}
-        <div class="alert alert-danger">
-            {{ field.errors }}
-        </div>
-        {% endif %}
-        {% if field.help_text %}
-        <small class="form-text text-muted">{{ field.help_text }}</small>
-        {% endif %}
-    </div>
-    {% endfor %}
+        <form method="post" onsubmit="return validateProfileForm()" class="profile-form">
+            {% csrf_token %}
 
-    <button type="submit">{% if profile %}Update{% else %}Create{% endif %} Profile</button>
-</form>
+            {% if form.non_field_errors %}
+            <div class="alert alert-danger">
+                {{ form.non_field_errors }}
+            </div>
+            {% endif %}
+
+            <div class="form-group">
+                <label for="{{ form.bio.id_for_label }}" class="form-label">
+                    Bio
+                    {% if form.bio.field.required %}
+                    <span class="required-indicator">*</span>
+                    {% endif %}
+                </label>
+                {{ form.bio }}
+                {% if form.bio.errors %}
+                <div class="form-error">
+                    {{ form.bio.errors }}
+                </div>
+                {% endif %}
+                <small class="form-help">Tell others about your background and what you hope to achieve.</small>
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.skills.id_for_label }}" class="form-label">
+                    Skills
+                    {% if form.skills.field.required %}
+                    <span class="required-indicator">*</span>
+                    {% endif %}
+                </label>
+                {{ form.skills }}
+                {% if form.skills.errors %}
+                <div class="form-error">
+                    {{ form.skills.errors }}
+                </div>
+                {% endif %}
+                <small class="form-help">Enter your skills separated by commas (e.g., Python, JavaScript, Project
+                    Management)</small>
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.interests.id_for_label }}" class="form-label">
+                    Interests
+                    {% if form.interests.field.required %}
+                    <span class="required-indicator">*</span>
+                    {% endif %}
+                </label>
+                {{ form.interests }}
+                {% if form.interests.errors %}
+                <div class="form-error">
+                    {{ form.interests.errors }}
+                </div>
+                {% endif %}
+                <small class="form-help">Enter your interests separated by commas (e.g., Machine Learning, Web
+                    Development)</small>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    {% if profile %}Update{% else %}Create{% endif %} Profile
+                </button>
+                <a href="{% url 'profile_list' %}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
 
 <style>
-    .required-indicator {
-        color: red;
-        margin-left: 4px;
+    .profile-form-container {
+        max-width: 600px;
+        margin: 2rem auto;
     }
 
-    .alert-danger {
-        color: #721c24;
-        background-color: #f8d7da;
-        border: 1px solid #f5c6cb;
-        padding: 0.75rem 1.25rem;
-        margin-top: 0.5rem;
-        border-radius: 0.25rem;
+    .form-subtitle {
+        color: var(--gray-600);
+        margin-bottom: 2rem;
+    }
+
+    .profile-form {
+        margin-top: 2rem;
+    }
+
+    .required-indicator {
+        color: var(--danger);
+        margin-left: 0.25rem;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    textarea.form-control {
+        min-height: 120px;
+        resize: vertical;
     }
 </style>
-
-<script>
-    function validateProfileForm() {
-        const form = document.querySelector('form');
-        const inputs = form.querySelectorAll('input, textarea, select');
-        let isValid = true;
-
-        inputs.forEach(input => {
-            if (input.hasAttribute('required') && !input.value.trim()) {
-                const fieldName = input.previousElementSibling.textContent;
-                showError(input, `${fieldName} is required`);
-                isValid = false;
-            }
-        });
-
-        return isValid;
-    }
-</script>
 {% endblock %}

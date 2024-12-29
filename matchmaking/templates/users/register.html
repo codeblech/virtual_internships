@@ -3,48 +3,121 @@
 {% block title %}Register - Mentorship Platform{% endblock %}
 
 {% block content %}
-<h2>Register</h2>
-<form method="post" id="registration-form" onsubmit="return validateRegistrationForm()">
-    {% csrf_token %}
-    <div class="form-group">
-        {{ form.username.label_tag }}
-        {{ form.username }}
-    </div>
-    <div class="form-group">
-        {{ form.email.label_tag }}
-        {{ form.email }}
-    </div>
-    <div class="form-group">
-        {{ form.password1.label_tag }}
-        {{ form.password1 }}
-        <small class="form-text text-muted">
-            Password must contain:
-            <ul>
-                <li>At least 8 characters</li>
-                <li>At least one uppercase letter</li>
-                <li>At least one lowercase letter</li>
-                <li>At least one number</li>
-                <li>At least one special character (!@#$%^&*(),.?":{}|<>)</li>
-            </ul>
-        </small>
-    </div>
-    <div class="form-group">
-        {{ form.password2.label_tag }}
-        {{ form.password2 }}
-    </div>
-    <div class="form-group role-selection">
-        <label>Select Role:</label>
-        <div class="checkbox-group">
-            {{ form.is_mentor }}
-            <label for="{{ form.is_mentor.id_for_label }}">Mentor</label>
-        </div>
-        <div class="checkbox-group">
-            {{ form.is_mentee }}
-            <label for="{{ form.is_mentee.id_for_label }}">Mentee</label>
-        </div>
-    </div>
-    <button type="submit">Register</button>
-</form>
-<p>Already have an account? <a href="{% url 'login' %}">Login here</a></p>
+<div class="auth-container">
+    <div class="auth-card card">
+        <h1>Create Account</h1>
+        <p class="auth-subtitle">Join our mentorship community</p>
 
+        <form method="post" id="registration-form" class="auth-form">
+            {% csrf_token %}
+
+            {% for field in form %}
+            {% if field.name != 'is_mentor' and field.name != 'is_mentee' %}
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}" class="form-label">
+                    {{ field.label }}
+                </label>
+                {{ field }}
+                {% if field.errors %}
+                <div class="form-error">
+                    {{ field.errors }}
+                </div>
+                {% endif %}
+                {% if field.help_text %}
+                <small class="form-help">{{ field.help_text }}</small>
+                {% endif %}
+            </div>
+            {% endif %}
+            {% endfor %}
+
+            <div class="role-selection">
+                <label class="form-label">I want to be a:</label>
+                <div class="role-options">
+                    <label class="role-option">
+                        <input type="checkbox" name="is_mentor" id="id_is_mentor">
+                        <div class="role-card">
+                            <span class="role-icon">👨‍🏫</span>
+                            <span class="role-title">Mentor</span>
+                            <span class="role-desc">Share your knowledge</span>
+                        </div>
+                    </label>
+
+                    <label class="role-option">
+                        <input type="checkbox" name="is_mentee" id="id_is_mentee">
+                        <div class="role-card">
+                            <span class="role-icon">👨‍🎓</span>
+                            <span class="role-title">Mentee</span>
+                            <span class="role-desc">Learn from others</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block">Create Account</button>
+        </form>
+
+        <div class="auth-footer">
+            <p>Already have an account? <a href="{% url 'login' %}">Login here</a></p>
+        </div>
+    </div>
+</div>
+
+<style>
+    .role-selection {
+        margin-bottom: 1.5rem;
+    }
+
+    .role-options {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin-top: 0.5rem;
+    }
+
+    .role-option {
+        cursor: pointer;
+    }
+
+    .role-option input {
+        display: none;
+    }
+
+    .role-card {
+        border: 2px solid var(--gray-200);
+        border-radius: 0.5rem;
+        padding: 1rem;
+        text-align: center;
+        transition: all 0.2s;
+    }
+
+    .role-option input:checked+.role-card {
+        border-color: var(--primary);
+        background-color: var(--gray-50);
+    }
+
+    .role-icon {
+        font-size: 2rem;
+        display: block;
+        margin-bottom: 0.5rem;
+    }
+
+    .role-title {
+        display: block;
+        font-weight: 600;
+        color: var(--gray-900);
+    }
+
+    .role-desc {
+        display: block;
+        font-size: 0.875rem;
+        color: var(--gray-600);
+    }
+
+    .form-help {
+        display: block;
+        margin-top: 0.25rem;
+        font-size: 0.875rem;
+        color: var(--gray-600);
+    }
+</style>
 {% endblock %}

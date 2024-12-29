@@ -6,102 +6,38 @@
 <head>
     <title>{% block title %}Mentorship Platform{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        /* Responsive navigation */
-        nav {
-            background-color: #333;
-            padding: 1rem;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 1rem;
-        }
-
-        @media (max-width: 768px) {
-            .nav-links {
-                flex-direction: column;
-                width: 100%;
-            }
-
-            nav {
-                flex-direction: column;
-            }
-        }
-
-        /* Responsive grid */
-        .profiles-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 1rem;
-            padding: 1rem;
-        }
-
-        .profile-card {
-            border: 1px solid #ddd;
-            padding: 1rem;
-            border-radius: 8px;
-            background: white;
-        }
-
-        /* Form styling */
-        .form-group {
-            margin-bottom: 1rem;
-        }
-
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 0.5rem;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-
-        .error-message {
-            color: red;
-            font-size: 0.875rem;
-            margin-top: 0.25rem;
-        }
-
-        /* Filter form */
-        .filter-form {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 
 <body>
     <nav>
-        {% if user.is_authenticated %}
-        <a href="{% url 'home' %}">Home</a>
-        <a href="{% url 'profile_list' %}">Browse Profiles</a>
-        <a href="{% url 'connection_list' %}">My Connections</a>
-        <form method="post" action="{% url 'logout' %}" style="display: inline;">
-            {% csrf_token %}
-            <button type="submit"
-                style="background: none; border: none; color: white; text-decoration: underline; cursor: pointer;">Logout</button>
-        </form>
-        {% else %}
-        <a href="{% url 'login' %}">Login</a>
-        <a href="{% url 'register' %}">Register</a>
-        {% endif %}
+        <div class="nav-container">
+            <a href="{% url 'home' %}" class="nav-brand">Mentorship Platform</a>
+            <div class="nav-links">
+                {% if user.is_authenticated %}
+                <a href="{% url 'home' %}" class="nav-link">Home</a>
+                <a href="{% url 'profile_list' %}" class="nav-link">Browse Profiles</a>
+                <a href="{% url 'connection_list' %}" class="nav-link">My Connections</a>
+                <form method="post" action="{% url 'logout' %}" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-secondary">Logout</button>
+                </form>
+                {% else %}
+                <a href="{% url 'login' %}" class="btn btn-secondary">Login</a>
+                <a href="{% url 'register' %}" class="btn btn-primary">Register</a>
+                {% endif %}
+            </div>
+        </div>
     </nav>
 
     <div class="container">
         {% if messages %}
-        <ul class="messages">
-            {% for message in messages %}
-            <li{% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
-                {% endfor %}
-        </ul>
+        {% for message in messages %}
+        <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+            {{ message }}
+        </div>
+        {% endfor %}
         {% endif %}
 
         {% block content %}
