@@ -12,5 +12,43 @@
     {% if user.is_mentee %}
     <p>You are registered as a Mentee</p>
     {% endif %}
+
+    {% if user.profile %}
+    <div class="profile-section">
+        <h3>Your Profile</h3>
+        <p><strong>Bio:</strong> {{ user.profile.bio|truncatewords:30 }}</p>
+        <p><strong>Skills:</strong> {{ user.profile.skills|join:", " }}</p>
+        <p><strong>Interests:</strong> {{ user.profile.interests|join:", " }}</p>
+        <a href="{% url 'profile_edit' %}" class="button">Edit Profile</a>
+    </div>
+    {% else %}
+    <div class="profile-section">
+        <p>You haven't created your profile yet.</p>
+        <a href="{% url 'profile_create' %}" class="button">Create Profile</a>
+    </div>
+    {% endif %}
 </div>
+
+<style>
+    .profile-section {
+        margin-top: 2rem;
+        padding: 1rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+
+    .button {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        background-color: #007bff;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        margin-top: 1rem;
+    }
+
+    .button:hover {
+        background-color: #0056b3;
+    }
+</style>
 {% endblock %}
