@@ -26,7 +26,6 @@ __pycache__/
 db.sqlite3
 instance/
 media/
-static/
 .DS_Store
 
 # OS generated files
