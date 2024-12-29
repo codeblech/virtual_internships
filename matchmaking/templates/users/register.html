@@ -4,10 +4,37 @@
 
 {% block content %}
 <h2>Register</h2>
-<form method="post">
+<form method="post" id="registration-form" onsubmit="return validateRegistrationForm()">
     {% csrf_token %}
-    {{ form.as_p }}
+    <div class="form-group">
+        {{ form.username.label_tag }}
+        {{ form.username }}
+    </div>
+    <div class="form-group">
+        {{ form.email.label_tag }}
+        {{ form.email }}
+    </div>
+    <div class="form-group">
+        {{ form.password1.label_tag }}
+        {{ form.password1 }}
+    </div>
+    <div class="form-group">
+        {{ form.password2.label_tag }}
+        {{ form.password2 }}
+    </div>
+    <div class="form-group role-selection">
+        <label>Select Role:</label>
+        <div class="checkbox-group">
+            {{ form.is_mentor }}
+            <label for="{{ form.is_mentor.id_for_label }}">Mentor</label>
+        </div>
+        <div class="checkbox-group">
+            {{ form.is_mentee }}
+            <label for="{{ form.is_mentee.id_for_label }}">Mentee</label>
+        </div>
+    </div>
     <button type="submit">Register</button>
 </form>
 <p>Already have an account? <a href="{% url 'login' %}">Login here</a></p>
+
 {% endblock %}

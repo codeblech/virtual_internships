@@ -4,12 +4,41 @@
 
 {% block content %}
 <h2>All Profiles</h2>
+
+<form id="profile-filter-form" class="filter-form">
+    <div class="filter-group">
+        <label for="role-filter">Role:</label>
+        <select id="role-filter">
+            <option value="all">All</option>
+            <option value="mentor">Mentors</option>
+            <option value="mentee">Mentees</option>
+        </select>
+    </div>
+
+    <div class="filter-group">
+        <label for="skill-filter">Skill:</label>
+        <input type="text" id="skill-filter" placeholder="Filter by skill">
+    </div>
+    
+    <div class="filter-group">
+        <label for="search-query">Search:</label>
+        <input type="text" id="search-query" placeholder="Search profiles">
+    </div>
+</form>
+
 <div class="profiles-grid">
     {% for profile in profiles %}
-    <div class="profile-card">
+    <div class="profile-card"
+         data-role="{% if profile.user.is_mentor %}mentor{% else %}mentee{% endif %}"
+         data-skills="{{ profile.skills|join:',' }}">
         <h3>{{ profile.user.username }}</h3>
         <p>{{ profile.bio|truncatewords:30 }}</p>
-        <a href="{% url 'profile_detail' pk=profile.pk %}">View Profile</a>
+        <div class="skills-list">
+            {% for skill in profile.skills %}
+            <span class="skill-tag">{{ skill }}</span>
+            {% endfor %}
+        </div>
+        <a href="{% url 'profile_detail' pk=profile.pk %}" class="view-profile-btn">View Profile</a>
     </div>
     {% empty %}
     <p>No profiles found.</p>

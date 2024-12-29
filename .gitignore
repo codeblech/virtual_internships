@@ -83,3 +83,4 @@ matchmaking/db.sqlite3
 
 # sqlite3
 *.sqlite3
+matchmaking/connections/__pycache__/models.cpython-312.pyc
