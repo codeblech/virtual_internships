@@ -4,7 +4,7 @@
 
 {% block content %}
 <h2>{% if profile %}Edit{% else %}Create{% endif %} Profile</h2>
-<form method="post">
+<form method="post" onsubmit="return validateProfileForm()">
     {% csrf_token %}
     {% if form.non_field_errors %}
     <div class="alert alert-danger">
@@ -16,6 +16,9 @@
     <div class="form-group">
         {{ field.label_tag }}
         {{ field }}
+        {% if field.field.required %}
+        <span class="required-indicator">*</span>
+        {% endif %}
         {% if field.errors %}
         <div class="alert alert-danger">
             {{ field.errors }}
@@ -29,4 +32,38 @@
 
     <button type="submit">{% if profile %}Update{% else %}Create{% endif %} Profile</button>
 </form>
+
+<style>
+    .required-indicator {
+        color: red;
+        margin-left: 4px;
+    }
+
+    .alert-danger {
+        color: #721c24;
+        background-color: #f8d7da;
+        border: 1px solid #f5c6cb;
+        padding: 0.75rem 1.25rem;
+        margin-top: 0.5rem;
+        border-radius: 0.25rem;
+    }
+</style>
+
+<script>
+    function validateProfileForm() {
+        const form = document.querySelector('form');
+        const inputs = form.querySelectorAll('input, textarea, select');
+        let isValid = true;
+
+        inputs.forEach(input => {
+            if (input.hasAttribute('required') && !input.value.trim()) {
+                const fieldName = input.previousElementSibling.textContent;
+                showError(input, `${fieldName} is required`);
+                isValid = false;
+            }
+        });
+
+        return isValid;
+    }
+</script>
 {% endblock %}

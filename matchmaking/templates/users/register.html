@@ -17,6 +17,16 @@
     <div class="form-group">
         {{ form.password1.label_tag }}
         {{ form.password1 }}
+        <small class="form-text text-muted">
+            Password must contain:
+            <ul>
+                <li>At least 8 characters</li>
+                <li>At least one uppercase letter</li>
+                <li>At least one lowercase letter</li>
+                <li>At least one number</li>
+                <li>At least one special character (!@#$%^&*(),.?":{}|<>)</li>
+            </ul>
+        </small>
     </div>
     <div class="form-group">
         {{ form.password2.label_tag }}

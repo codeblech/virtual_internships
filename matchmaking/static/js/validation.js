@@ -1,4 +1,26 @@
 // Form validation for registration
+function validatePassword(password) {
+  const requirements = {
+    length: password.length >= 8,
+    uppercase: /[A-Z]/.test(password),
+    lowercase: /[a-z]/.test(password),
+    number: /[0-9]/.test(password),
+    special: /[!@#$%^&*(),.?":{}|<>]/.test(password),
+  };
+
+  const messages = [];
+  if (!requirements.length) messages.push("At least 8 characters long");
+  if (!requirements.uppercase) messages.push("At least one uppercase letter");
+  if (!requirements.lowercase) messages.push("At least one lowercase letter");
+  if (!requirements.number) messages.push("At least one number");
+  if (!requirements.special) messages.push("At least one special character");
+
+  return {
+    isValid: Object.values(requirements).every((req) => req),
+    messages,
+  };
+}
+
 function validateRegistrationForm() {
   const form = document.getElementById("registration-form");
   const username = document.getElementById("id_username");
@@ -10,21 +32,30 @@ function validateRegistrationForm() {
   let isValid = true;
 
   // Username validation
-  if (username.value.length < 3) {
+  if (!username.value.trim()) {
+    showError(username, "Username is required");
+    isValid = false;
+  } else if (username.value.length < 3) {
     showError(username, "Username must be at least 3 characters long");
     isValid = false;
   }
 
   // Email validation
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(email.value)) {
-    showError(email, "Please enter a valid email address");
+  if (!email.value.trim()) {
+    showError(email, "Email is required");
     isValid = false;
+  } else {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email.value)) {
+      showError(email, "Please enter a valid email address");
+      isValid = false;
+    }
   }
 
   // Password validation
-  if (password1.value.length < 8) {
-    showError(password1, "Password must be at least 8 characters long");
+  const passwordValidation = validatePassword(password1.value);
+  if (!passwordValidation.isValid) {
+    showError(password1, "Password requirements:\n" + passwordValidation.messages.join("\n"));
     isValid = false;
   }
 
