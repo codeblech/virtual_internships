@@ -1,42 +1,71 @@
+# Mentor Mentee Matchmaking
+
+### Hosted At
+https://malikk.pythonanywhere.com
+
+### Architecture
+Chose a monolithic approach with Django for:
+- Built-in authentication
+- Admin interface
+- ORM for database management
+- Template system (DTL)
+- Form handling
+
 ### Authentication
-Computerphile(Tom Scoot) -> https://www.youtube.com/watch?v=8ZtInClXe1Q
-###### Client-side validation (JavaScript):
-- Provides immediate feedback to users
-- Reduces server load
-- Improves user experience
-- BUT can be bypassed by disabling JavaScript or using tools like Postman
-###### Server-side validation (Django):
-- Provides actual security
-- Cannot be bypassed
-- Ensures data integrity
-- Is the last line of defense
+###### Client-side validation (JavaScript):
+- Immediate user feedback
+- Reduced server load
+- Improved UX
+- Note: Can be bypassed, used only for UX
 
-##### Not in Django Auth
-- Password strength checking
-- Throttling of login attempts
-- Authentication against third-parties (OAuth, for example)
-- Object-level permissions
+###### Server-side validation (Django):
+- Primary security layer
+- Password requirements enforcement
+- CSRF protection
+- Session management
 
-### FastAPI Template
-https://github.com/tiangolo/full-stack-fastapi-template
-Not using it because it has too much of what we don't need.
+### Database
+Using SQLite because:
+- Built into Python
+- Simple setup
+- Sufficient for MVP
+- Can migrate to PostgreSQL later if needed
 
-### Client Server vs Monolith
-##### **Advantages of Client-Server
-- Decoupling of  the frontend and backend
-- Scalability: We can later replace the frontend (e.g., switch from vanilla JS to React) without touching the backend.
-- Cross-Platform: APIs can be consumed by multiple clients (web apps, mobile apps, etc.).
-##### **Advantage of Monolith**
-- Faster and simpler development
-- Easier deployment
-- No version management of APIs
-- Simpler testing
-- Django / Flask are build really for this architecture
-### Web Framework
-Choosing Django because it has build in auth and admin panel.
+### Frontend
+Vanilla stack:
+- HTML/CSS/JavaScript
+- No frameworks
+- Django Template Language
+- AJAX for dynamic updates
+- Responsive design with CSS Grid/Flexbox
 
-### Jinja2 vs DTL
-Django has built-in support for DTL and it is suited for our simple use case.
+### Core Features
+1. User Management:
+   - Custom user model
+   - Mentor/Mentee roles
+   - Profile creation
 
-### SQLite vs PostgreSQL
-Using SQLite is simpler and straightforward because there of built-in support in Python. We can later (if needed) switch to PostgreSQL easily with a few lines of code change. `pgloader` can help in those migrations. We can even use SQLite for development and PostgreSQL for production.
+2. Profile System:
+   - Bio, skills, interests
+   - JSON fields for flexible storage
+   - Profile editing/viewing
+
+3. Connection System:
+   - Request/accept/reject flow
+   - Many-to-many relationships
+   - Status tracking
+
+4. Search/Filter:
+   - Role-based filtering
+   - Skill matching
+   - Real-time updates
+
+### Development
+- Fork and clone this repo
+- With Poetry installed:
+```shell
+poetry shell
+poetry install
+python manage.py migrate
+python manage.py runserver
+```
